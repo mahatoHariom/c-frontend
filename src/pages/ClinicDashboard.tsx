@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { api, FollowUp, Notification } from "../api";
 
 const Container = styled.div`
-  width: 100%; /* Full width of parent */
-  max-width: 1200px; /* Keeps content readable on large screens */
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 `;
@@ -68,15 +68,15 @@ const ClinicDashboard: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const [followUpsRes, notificationsRes] = await Promise.all([
-        api.getFollowUps(),
-        api.getNotifications(),
-      ]);
+      const followUpsRes = await api.getFollowUps();
       setFollowUps(followUpsRes.data);
+
+      const notificationsRes = await api.getNotifications();
       setNotifications(notificationsRes.data);
       setError(null);
     } catch (err) {
-      setError("Failed to fetch data. Please try again.");
+      console.error("Fetch error:", err);
+      setError("Failed to fetch data. Please check the console for details.");
     }
   };
 
@@ -96,11 +96,12 @@ const ClinicDashboard: React.FC = () => {
       {error && (
         <p style={{ color: "#e74c3c", textAlign: "center" }}>{error}</p>
       )}
-      {notifications.map((note) => (
-        <NotificationBanner key={note.id}>
-          {note.message} - {new Date(note.createdAt).toLocaleString()}
-        </NotificationBanner>
-      ))}
+      {notifications.length > 0 &&
+        notifications.map((note) => (
+          <NotificationBanner key={note.id}>
+            {note.message} - {new Date(note.createdAt).toLocaleString()}
+          </NotificationBanner>
+        ))}
       <Card>
         <h3>Add New Patient</h3>
         <Input
@@ -120,18 +121,22 @@ const ClinicDashboard: React.FC = () => {
         <Button onClick={addPatient}>Add Patient</Button>
       </Card>
       <h2>Follow-Ups</h2>
-      {followUps.map((followUp) => (
-        <Card key={followUp.id} isConcern={followUp.status === "CONCERN"}>
-          <p>
-            <strong>{followUp.patient.name}</strong> -{" "}
-            {followUp.patient.procedure}
-          </p>
-          <p>Scheduled: {new Date(followUp.scheduledAt).toLocaleString()}</p>
-          <p>Status: {followUp.status}</p>
-          {followUp.response && <p>Response: {followUp.response}</p>}
-          <a href={`/patient/${followUp.id}`}>Respond</a>
-        </Card>
-      ))}
+      {followUps.length === 0 ? (
+        <p>No follow-ups scheduled.</p>
+      ) : (
+        followUps.map((followUp) => (
+          <Card key={followUp.id} isConcern={followUp.status === "CONCERN"}>
+            <p>
+              <strong>{followUp.patient.name}</strong> -{" "}
+              {followUp.patient.procedure}
+            </p>
+            <p>Scheduled: {new Date(followUp.scheduledAt).toLocaleString()}</p>
+            <p>Status: {followUp.status}</p>
+            {followUp.response && <p>Response: {followUp.response}</p>}
+            <a href={`/patient/${followUp.id}`}>Respond</a>
+          </Card>
+        ))
+      )}
     </Container>
   );
 };

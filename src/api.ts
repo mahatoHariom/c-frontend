@@ -1,33 +1,32 @@
 import axios from "axios";
 
-const API_URL = process.env.REACT_APP_API_URL || "clinic-clbd.vercel.app/api";
-
-export interface Patient {
-  id: string;
-  name: string;
-  procedure: string;
-  followUps: FollowUp[];
-}
+const API_URL = "https://backend-clinic-gold.vercel.app/api";
 
 export interface FollowUp {
   id: string;
   patientId: string;
   scheduledAt: string;
-  status: "PENDING" | "HEALTHY" | "CONCERN";
-  response?: string;
-  patient: Patient;
+  status: string;
+  response: string | null;
+  createdAt: string;
+  patient: {
+    id: string;
+    name: string;
+    procedure: string;
+    createdAt: string;
+  };
 }
 
 export interface Notification {
   id: string;
   message: string;
-  followUpId: string;
   createdAt: string;
+  followUpId?: string;
 }
 
 export const api = {
   addPatient: (data: { name: string; procedure: string }) =>
-    axios.post<Patient>(`${API_URL}/patients`, data),
+    axios.post(`${API_URL}/patients`, data),
   getFollowUps: () => axios.get<FollowUp[]>(`${API_URL}/follow-ups`),
   respondToFollowUp: (data: {
     followUpId: string;

@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { api } from "../api";
 
 const FormContainer = styled.div`
-  width: 100%; /* Full width of parent */
-  max-width: 600px; /* Limits width for readability */
+  width: 100%;
+  max-width: 600px;
   margin: 50px auto;
   padding: 30px;
   background: white;
@@ -26,6 +26,7 @@ const Button = styled.button<{ color?: string }>`
   border-radius: 8px;
   border: none;
   cursor: pointer;
+  margin: 10px;
   &:hover {
     background: ${(props) => (props.color ? "#c0392b" : "#27ae60")};
   }
