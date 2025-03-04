@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://backend-clinic-gold.vercel.app/api";
+const API_URL = "https://backed-teal.vercel.app/api";
 
 export interface FollowUp {
   id: string;
